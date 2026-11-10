@@ -1,0 +1,4 @@
+# OpenSCAD exports (regenerate from the .scad files)
+/*.svg
+/*.dxf
+/*.png
