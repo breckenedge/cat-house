@@ -18,20 +18,22 @@ A gable-roof cat house with an open bottom that sits over a cardboard scratcher.
 ## Usage
 
 1. Open `house.scad` in OpenSCAD and turn on **Window → Customizer**.
-2. Set your dimensions, `thickness` (measure your real sheet) and `kerf`.
+2. Set your dimensions (all in **inches**), `thickness` (measure your real sheet) and `kerf`.
 3. Render with **F6**, then use **File → Export → SVG** or **DXF**.
 
 From the command line (on Windows, use `openscad.com` to get console output):
 
 ```sh
-openscad -o house.svg -D house_width=350 -D thickness=6 house.scad
+openscad -o house.svg -D thickness=0.22 house.scad
 openscad -o house.png -D 'mode="assembled"' house.scad
 ```
+
+Settings are in inches, but exports are scaled to millimeters (what SVG/DXF and laser software expect), so parts import at the correct real-world size.
 
 Use `part` to export a single panel when the full layout won't fit your laser bed.
 
 ## Tips
 
-- **Kerf:** start at 0.1–0.2 mm and cut a test corner first. Raise it if the joints are loose, lower it if they're too tight.
-- **Thickness:** "6 mm" plywood is often 5.6–6.4 mm. Measure it with calipers.
+- **Kerf:** start at 0.004–0.008" and cut a test corner first. Raise it if the joints are loose, lower it if they're too tight.
+- **Thickness:** nominal 1/4" plywood is often ~0.22". Measure it with calipers.
 - **Scratcher:** the console prints the inside footprint to cut the cardboard to, plus each part's size and any fit warnings.
