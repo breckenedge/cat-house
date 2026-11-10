@@ -1,10 +1,6 @@
-# laser-box
+# Laser-cut cat house
 
-Parametric laser-cut designs for [OpenSCAD](https://openscad.org/). Change the sizes, material thickness or kerf, then export SVG/DXF for your laser.
-
-## Designs
-
-### Cat house — `house.scad`
+A parametric cat house for laser cutting, made in [OpenSCAD](https://openscad.org/). Change the sizes, material thickness or kerf, then export SVG/DXF for your laser.
 
 ![Assembled cat house](images/house-assembled.png)
 
@@ -18,15 +14,9 @@ A gable-roof cat house with an open bottom that sits over a cardboard scratcher.
 
 ![Flat cut layout](images/house-flat.png)
 
-### Finger-joint box — `box.scad`
-
-![Box cut layout](images/box-flat.png)
-
-A box with 6 panels, finger joints on every edge and an optional open top. Sizes can be inner or outer dimensions.
-
 ## Usage
 
-1. Open a `.scad` file in OpenSCAD and turn on **Window → Customizer**.
+1. Open `house.scad` in OpenSCAD and turn on **Window → Customizer**.
 2. Set your dimensions, `thickness` (measure your real sheet) and `kerf`.
 3. Render with **F6**, then use **File → Export → SVG** or **DXF**.
 
@@ -43,4 +33,4 @@ Use `part` to export a single panel when the full layout won't fit your laser be
 
 - **Kerf:** start at 0.1–0.2 mm and cut a test corner first. Raise it if the joints are loose, lower it if they're too tight.
 - **Thickness:** "6 mm" plywood is often 5.6–6.4 mm. Measure it with calipers.
-- The console prints the overall size, each part's size and any fit warnings.
+- **Scratcher:** the console prints the inside footprint to cut the cardboard to, plus each part's size and any fit warnings.
