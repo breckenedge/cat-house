@@ -9,9 +9,7 @@
 // - Gable slopes have tabs that go through slots in the roof panels.
 // - Roof panel A overlaps panel B at the ridge. The lengths are worked
 //   out from the pitch and the material thickness.
-// All settings are in INCHES. The output is scaled to millimeters
-// (x 25.4) because SVG/DXF exports and laser software expect mm.
-// Imported exports come out at the correct real-world size.
+// All sizes are OUTER dimensions in mm.
 //
 // mode = "flat"      -> 2D cut layout. Render (F6), then export SVG/DXF.
 // mode = "assembled" -> 3D preview of the finished house (not for cutting).
@@ -25,54 +23,52 @@ mode = "flat"; // [flat, assembled]
 // When true, the walls are sized to fit around the scratcher
 // and house_width/house_depth are ignored.
 fit_to_scratcher    = true;
-scratcher_width     = 14.25;  // across the doors
-scratcher_depth     = 14.25;  // along the side walls
-scratcher_clearance = 0.125;  // total slack per direction, so it drops in
+scratcher_width     = 361.95;  // 14.25 in, across the doors
+scratcher_depth     = 361.95;  // 14.25 in, along the side walls
+scratcher_clearance = 2;       // total slack per direction, so it drops in
 // Thickness of the cardboard scratcher. Door openings start above it.
-scratcher_height = 1.5;
+scratcher_height = 40;
 
 /* [House size] */
-house_width = 16;    // gable (front/back) wall width, outer
-house_depth = 20;    // side wall length, outer
-wall_height = 12;    // height to the eaves
-roof_angle  = 40;    // [15:1:60] degrees
+house_width = 400;   // gable (front/back) wall width, outer
+house_depth = 500;   // side wall length, outer
+wall_height = 300;   // height to the eaves
+roof_angle  = 40;    // [15:1:60]
 
 /* [Roof] */
-eave_overhang   = 0.75;  // past the side walls, down the slope
-gable_overhang  = 0.75;  // past the front/back walls
-roof_tabs       = 2;     // tabs per slope
-roof_tab_length = 1.5;   // max tab length
+eave_overhang   = 20;  // past the side walls, down the slope
+gable_overhang  = 20;  // past the front/back walls
+roof_tabs       = 2;   // tabs per slope
+roof_tab_length = 40;  // max tab length
 
 /* [Doors] */
 front_door  = true;
 back_door   = true;
-door_width  = 7;
-door_height = 9;     // opening height, measured from the sill
+door_width  = 180;
+door_height = 230;   // opening height, measured from the sill
 door_arched = true;
 
 /* [Windows] */
 windows_per_side = 2;
-window_width     = 4;
-window_height    = 4;
-window_sill      = 6;    // height of the window bottom above the ground
+window_width     = 100;
+window_height    = 100;
+window_sill      = 150;  // height of the window bottom above the ground
 window_arched    = true;
 
 /* [Material] */
-// Measure your sheet. Nominal 1/4" plywood is often ~0.22".
-thickness = 0.25;
-kerf      = 0.008;  // raise for a tighter fit, lower if too tight
+thickness = 6;
+kerf      = 0.2;  // raise for a tighter fit, lower if too tight
 
 /* [Fingers] */
-finger_width = 1.5;
+finger_width = 40;
 
 /* [Layout] */
-gap  = 0.375;
+gap  = 10;
 part = "all"; // [all, front, back, side, roof_a, roof_b]
 
 /* [Hidden] */
 $fn = 96;
-MM  = 25.4;    // output scale: inches -> mm
-eps = 0.001;
+eps = 0.01;
 t  = thickness;
 W  = fit_to_scratcher ? scratcher_width + scratcher_clearance + 2 * t : house_width;
 D  = fit_to_scratcher ? scratcher_depth + scratcher_clearance + 2 * t : house_depth;
@@ -98,12 +94,11 @@ nZ = fingers(H);
 tab_len = min(roof_tab_length, S / (2 * roof_tabs));
 tab_pos = [for (i = [0 : roof_tabs - 1]) S * (i + 0.5) / roof_tabs - tab_len / 2];
 
-function r(x) = round(x * 100) / 100;
-echo(str("Peak height: ", r(Hp), " in"));
-echo(str("House footprint (outer): ", r(W), " x ", r(D), " in"));
-echo(str("Inside footprint: ", r(W - 2 * t), " x ", r(D - 2 * t), " in"));
-echo(str("Part sizes (in): gable ", r(W), " x ", r(Hp), ", side ", r(D), " x ", r(H),
-         ", roof A ", r(roofA_len), " x ", r(roof_d), ", roof B ", r(roofB_len), " x ", r(roof_d)));
+echo(str("Peak height: ", Hp, " mm"));
+echo(str("House footprint (outer): ", W, " x ", D, " mm"));
+echo(str("Inside footprint: ", W - 2 * t, " x ", D - 2 * t, " mm"));
+echo(str("Part sizes: gable ", W, " x ", Hp, ", side ", D, " x ", H,
+         ", roof A ", roofA_len, " x ", roof_d, ", roof B ", roofB_len, " x ", roof_d));
 if (scratcher_height + door_height >= Hp - t) echo("WARNING: door is taller than the gable");
 if (window_sill + window_height >= H) echo("WARNING: windows extend past the wall top");
 if (window_sill <= scratcher_height) echo("WARNING: windows start below the scratcher top");
@@ -143,9 +138,9 @@ module left_slope_tabs() {
     n = [-sin(a), cos(a)];
     o = [0, H];
     for (p = tab_pos) {
-        A = o + p * u - 0.002 * n;
-        B = o + (p + tab_len) * u - 0.002 * n;
-        polygon([A, B, B + (t + 0.002) * n, A + (t + 0.002) * n]);
+        A = o + p * u - 0.05 * n;
+        B = o + (p + tab_len) * u - 0.05 * n;
+        polygon([A, B, B + (t + 0.05) * n, A + (t + 0.05) * n]);
     }
 }
 
@@ -227,12 +222,10 @@ module assembled() {
 
 // ---------- output ----------
 
-scale(MM) {
-    if (mode == "assembled") assembled();
-    else if (part == "all")    layout();
-    else if (part == "front")  gable(front_door);
-    else if (part == "back")   gable(back_door);
-    else if (part == "side")   side_wall();
-    else if (part == "roof_a") roof_panel(roofA_len);
-    else if (part == "roof_b") roof_panel(roofB_len);
-}
+if (mode == "assembled") assembled();
+else if (part == "all")    layout();
+else if (part == "front")  gable(front_door);
+else if (part == "back")   gable(back_door);
+else if (part == "side")   side_wall();
+else if (part == "roof_a") roof_panel(roofA_len);
+else if (part == "roof_b") roof_panel(roofB_len);
