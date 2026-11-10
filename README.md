@@ -9,6 +9,7 @@ A gable-roof cat house with an open bottom that sits over a cardboard scratcher.
 - 6 parts: front and back walls with arched doors, two side walls with windows, and two roof panels
 - Finger-jointed corners, and roof tabs that go through slots in the roof panels. Everything is glued together.
 - The roof panels overlap at the ridge, with lengths worked out from the pitch and material thickness
+- Sized to fit a 14.25" × 14.25" scratcher by default. The walls are calculated from `scratcher_width`/`scratcher_depth` plus `scratcher_clearance`. Set `fit_to_scratcher = false` to use `house_width`/`house_depth` instead.
 - The doors start at `scratcher_height`, so the cardboard stays in and cats step up onto it
 - **Two modes:** `flat` (cut layout) and `assembled` (3D preview)
 

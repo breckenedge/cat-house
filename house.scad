@@ -19,15 +19,21 @@
 /* [Mode] */
 mode = "flat"; // [flat, assembled]
 
-/* [House size] */
-house_width = 400;   // gable (front/back) wall width
-house_depth = 500;   // side wall length
-wall_height = 300;   // height to the eaves
-roof_angle  = 40;    // [15:1:60]
-
 /* [Scratcher] */
+// When true, the walls are sized to fit around the scratcher
+// and house_width/house_depth are ignored.
+fit_to_scratcher    = true;
+scratcher_width     = 361.95;  // 14.25 in, across the doors
+scratcher_depth     = 361.95;  // 14.25 in, along the side walls
+scratcher_clearance = 2;       // total slack per direction, so it drops in
 // Thickness of the cardboard scratcher. Door openings start above it.
 scratcher_height = 40;
+
+/* [House size] */
+house_width = 400;   // gable (front/back) wall width, outer
+house_depth = 500;   // side wall length, outer
+wall_height = 300;   // height to the eaves
+roof_angle  = 40;    // [15:1:60]
 
 /* [Roof] */
 eave_overhang   = 20;  // past the side walls, down the slope
@@ -64,8 +70,8 @@ part = "all"; // [all, front, back, side, roof_a, roof_b]
 $fn = 96;
 eps = 0.01;
 t  = thickness;
-W  = house_width;
-D  = house_depth;
+W  = fit_to_scratcher ? scratcher_width + scratcher_clearance + 2 * t : house_width;
+D  = fit_to_scratcher ? scratcher_depth + scratcher_clearance + 2 * t : house_depth;
 H  = wall_height;
 a  = roof_angle;
 k  = mode == "assembled" ? 0 : kerf;   // no kerf offset in the 3D preview
@@ -89,7 +95,8 @@ tab_len = min(roof_tab_length, S / (2 * roof_tabs));
 tab_pos = [for (i = [0 : roof_tabs - 1]) S * (i + 0.5) / roof_tabs - tab_len / 2];
 
 echo(str("Peak height: ", Hp, " mm"));
-echo(str("Scratcher footprint (inside): ", W - 2 * t, " x ", D - 2 * t, " mm"));
+echo(str("House footprint (outer): ", W, " x ", D, " mm"));
+echo(str("Inside footprint: ", W - 2 * t, " x ", D - 2 * t, " mm"));
 echo(str("Part sizes: gable ", W, " x ", Hp, ", side ", D, " x ", H,
          ", roof A ", roofA_len, " x ", roof_d, ", roof B ", roofB_len, " x ", roof_d));
 if (scratcher_height + door_height >= Hp - t) echo("WARNING: door is taller than the gable");
